@@ -1,0 +1,464 @@
+{
+	"info": {
+		"_postman_id": "f3bc909d-5251-4d68-8758-fc0da2fd6e33",
+		"name": "Kafka_Connect",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38263615"
+	},
+	"item": [
+		{
+			"name": "Config xử dụng debezium",
+			"item": [
+				{
+					"name": "Source connect",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"pg-connector\",\n  \"config\": {\n    \"connector.class\": \"io.debezium.connector.postgresql.PostgresConnector\",\n    \"database.hostname\": \"postgres\",\n    \"database.port\": \"5432\",\n    \"database.user\": \"postgres\",\n    \"database.password\": \"anhnt93\",\n    \"database.dbname\": \"test_kafka_connect\",\n    \"database.server.name\": \"demo_server\",\n    \"plugin.name\": \"pgoutput\",\n    \"slot.name\": \"debezium_slot\",\n    \"publication.name\": \"debezium_pub\",\n    \"table.include.list\": \"public.users\", \n    \"topic.prefix\": \"demo-source-topic\",\n    \"key.converter\": \"org.apache.kafka.connect.json.JsonConverter\",\n    \"key.converter.schemas.enable\": true,\n    \"value.converter\": \"org.apache.kafka.connect.json.JsonConverter\",\n    \"value.converter.schemas.enable\": true,\n    \"snapshot.mode\": \"initial\"\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8083/connectors",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"connectors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sink connect",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"sink-connector\",  \n    \"config\": {\n        \"connector.class\": \"io.debezium.connector.jdbc.JdbcSinkConnector\",  \n        \"tasks.max\": \"1\",  \n        \"connection.url\": \"jdbc:postgresql://postgres/test_sink_connect\",  \n        \"connection.username\": \"postgres\",  \n        \"connection.password\": \"anhnt93\",  \n        \"insert.mode\": \"upsert\",  \n        \"delete.enabled\": \"true\",  \n        \"primary.key.mode\": \"record_key\",\n        \"pk.fields\": \"id\",  \n        \"schema.evolution\": \"basic\",  \n        \"use.time.zone\": \"UTC\",  \n        \"topics\": \"demo-source-topic.public.users\",\n        \"key.converter\": \"org.apache.kafka.connect.json.JsonConverter\",\n        \"key.converter.schemas.enable\": true,\n        \"value.converter\": \"org.apache.kafka.connect.json.JsonConverter\",\n        \"value.converter.schemas.enable\": true,\n        \"transforms\": \"RenameTable\",\n        \"transforms.RenameTable.type\": \"org.apache.kafka.connect.transforms.RegexRouter\",\n        \"transforms.RenameTable.regex\": \".*\",\n        \"transforms.RenameTable.replacement\": \"users\" \n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8083/connectors",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"connectors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sink connect io.debezium.connector.jdbc.JdbcSinkConnector",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"sink-connector-test-stream\",  \n    \"config\": {\n        \"connector.class\": \"io.debezium.connector.jdbc.JdbcSinkConnector\",  \n        \"tasks.max\": \"1\",  \n        \"connection.url\": \"jdbc:postgresql://postgres/test_sink_connect\",  \n        \"connection.username\": \"postgres\",  \n        \"connection.password\": \"anhnt93\",  \n        \"insert.mode\": \"upsert\",  \n        \"delete.enabled\": \"true\",  \n        \"primary.key.mode\": \"record_key\",\n        \"pk.fields\": \"id\",  \n        \"schema.evolution\": \"basic\",  \n        \"use.time.zone\": \"UTC\",  \n        \"topics\": \"enriched-logs\",\n        \"key.converter\": \"org.apache.kafka.connect.json.JsonConverter\",\n        \"key.converter.schemas.enable\": true,\n        \"value.converter\": \"org.apache.kafka.connect.json.JsonConverter\",\n        \"value.converter.schemas.enable\": true,\n        // cấu hình change table\n        \"transforms\": \"RenameTable\",\n        \"transforms.RenameTable.type\": \"org.apache.kafka.connect.transforms.RegexRouter\",\n        \"transforms.RenameTable.regex\": \".*\",\n        \"transforms.RenameTable.replacement\": \"users-detail\",\n        //cấu hình khi xử lý message lỗi\n        \"errors.tolerance\": \"all\",\n        \"errors.log.enable\": \"true\",\n        \"errors.deadletterqueue.topic.name\": \"postgres-dlq\",\n        \"errors.deadletterqueue.topic.replication.factor\": \"1\",\n        \"errors.deadletterqueue.context.headers.enable\": \"true\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8083/connectors",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"connectors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sink connect io.confluent.connect.jdbc.JdbcSinkConnector",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"sink-connector-test\",\n    \"config\": {\n        \"connector.class\": \"io.confluent.connect.jdbc.JdbcSinkConnector\",\n        \"tasks.max\": \"1\",\n        \"topics\": \"enriched-logs\",\n        \"connection.url\": \"jdbc:postgresql://postgres/test_sink_connect\",  \n        \"connection.user\": \"postgres\",  \n        \"connection.password\": \"anhnt93\",  \n        \"insert.mode\": \"upsert\",  \n        \"delete.enabled\": \"true\",  \n        \"pk.mode\": \"record_key\",\n        \"primary.key.mode\": \"record_key\", \n        \"schema.evolution\": \"basic\",  \n        \"use.time.zone\": \"UTC\",\n        \"pk.fields\": \"id\",\n        \"auto.create\": \"true\",\n        \"auto.evolve\": \"true\",\n        \"key.converter\": \"org.apache.kafka.connect.json.JsonConverter\",\n        \"key.converter.schemas.enable\": \"true\",\n        \"value.converter\": \"org.apache.kafka.connect.json.JsonConverter\",\n        \"value.converter.schemas.enable\": \"true\",\n        \"schemas.enable\": true,\n        // cấu hình change table\n        \"transforms\": \"RenameTable\",\n        \"transforms.RenameTable.type\": \"org.apache.kafka.connect.transforms.RegexRouter\",\n        \"transforms.RenameTable.regex\": \".*\",\n        \"transforms.RenameTable.replacement\": \"users-detail\",\n        // cấu hình khi xử lý message lỗi\n        \"errors.tolerance\": \"all\",\n        \"errors.log.enable\": \"true\",\n        \"errors.deadletterqueue.topic.name\": \"postgres-dlq\",\n        \"errors.deadletterqueue.topic.replication.factor\": \"1\",\n        \"errors.deadletterqueue.context.headers.enable\": \"true\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8083/connectors",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"connectors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sink connect ELK",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"elasticsearch-sink\",\n  \"config\": {\n    \"connector.class\": \"io.confluent.connect.elasticsearch.ElasticsearchSinkConnector\",\n    \"topics\": \"enriched-logs\",\n    \"connection.url\": \"http://elasticsearch:9200\",\n    \"connection.username\": \"elastic\",\n    \"connection.password\": \"anhnt93@\",\n    \"type.name\": \"_doc\",\n    \"key.converter\": \"org.apache.kafka.connect.storage.StringConverter\",\n    \"key.converter.schemas.enable\": \"true\",\n    \"value.converter\": \"org.apache.kafka.connect.json.JsonConverter\",\n    \"value.converter.schemas.enable\": \"true\",\n    \"schemas.enable\": true,\n    \"key.ignore\": \"true\",\n    \"schema.ignore\": \"true\",     \n    \"tasks.max\": \"1\",\n    \"transforms\": \"changeIndexname\",\n    \"transforms.changeIndexname.type\": \"org.apache.kafka.connect.transforms.RegexRouter\",\n    \"transforms.changeIndexname.regex\": \"enriched-logs\",\n    \"transforms.changeIndexname.replacement\": \"index-elk-test\",\n    \"flush.synchronously\": \"true\"\n  }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8083/connectors",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"connectors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "xóa connector",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8083/connectors/sink-connector-test",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"connectors",
+								"sink-connector-test"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all connector",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8083/connectors",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"connectors"
+							]
+						},
+						"description": "Generated from cURL: curl http://localhost:8083/connectors\r\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Kiểm tra trạng thái connector",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8083/connectors/pg-connector/status",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"connectors",
+								"pg-connector",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Kiểm tra trạng thái sink connector",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8083/connectors/sink-connector/status",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"connectors",
+								"sink-connector",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Kiểm tra trạng thái sink connector",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8083/connectors/sink-connector-test/status",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"connectors",
+								"sink-connector-test",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Kiểm tra trạng thái sink connector ELK",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8083/connectors/elasticsearch-sink/status",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"connectors",
+								"elasticsearch-sink",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "restart lại connect",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8083/connectors/elasticsearch-sink/restart",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"connectors",
+								"elasticsearch-sink",
+								"restart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Lấy tất cả plugins",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8083/connector-plugins",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"connector-plugins"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update config",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"connector.class\": \"io.debezium.connector.jdbc.JdbcSinkConnector\",\n    \"tasks.max\": \"1\",\n    \"connection.url\": \"jdbc:postgresql://postgres/test_sink_connect\",\n    \"connection.username\": \"postgres\",\n    \"connection.password\": \"anhnt93\",\n    \"insert.mode\": \"upsert\",\n    \"delete.enabled\": \"true\",\n    \"primary.key.mode\": \"record_key\",\n    \"schema.evolution\": \"basic\",\n    \"use.time.zone\": \"UTC\",\n    \"topics\": \"enriched-logs\",\n    \"key.converter\": \"org.apache.kafka.connect.json.JsonConverter\",\n    \"key.converter.schemas.enable\": false,\n    \"value.converter\": \"org.apache.kafka.connect.json.JsonConverter\",\n    \"value.converter.schemas.enable\": false,\n    \"schemas.enable\": false,\n    \"transforms\": \"RenameTable\",\n    \"transforms.RenameTable.type\": \"org.apache.kafka.connect.transforms.RegexRouter\",\n    \"transforms.RenameTable.regex\": \".*\",\n    \"transforms.RenameTable.replacement\": \"users-detail\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8083/connectors/sink-connector-test/config",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"connectors",
+								"sink-connector-test",
+								"config"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get document by index key",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "anhnt93@",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "elastic",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:9200/_search",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"_search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get index",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "anhnt93@",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "elastic",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:9200/_cat/indices?v",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"_cat",
+								"indices"
+							],
+							"query": [
+								{
+									"key": "v",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

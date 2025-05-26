@@ -1,0 +1,92 @@
+# Copyright Broadcom, Inc. All Rights Reserved.
+# SPDX-License-Identifier: APACHE-2.0
+
+services:
+  redis-7000:
+    image: bitnami/redis:latest
+    container_name: redis-7000
+    ports:
+      - '7000:6379'
+    volumes:
+      - redis-cluster_data-0:/bitnami/redis/data
+    environment:
+      - 'REDIS_PASSWORD=${REDIS_PASSWORD}'
+      - 'REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5'
+
+  redis-7001:
+    image: bitnami/redis:latest
+    container_name: redis-7001
+    ports:
+      - '7001:6379'
+    volumes:
+      - redis-cluster_data-1:/bitnami/redis/data
+    environment:
+      - 'REDIS_PASSWORD=${REDIS_PASSWORD}'
+      - 'REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5'
+
+  redis-7002:
+    image: bitnami/redis:latest
+    container_name: redis-7002
+    ports:
+      - '7002:6379'
+    volumes:
+      - redis-cluster_data-2:/bitnami/redis/data
+    environment:
+      - 'REDIS_PASSWORD=${REDIS_PASSWORD}'
+      - 'REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5'
+
+  redis-7003:
+    image: bitnami/redis:latest
+    container_name: redis-7003
+    ports:
+      - '7003:6379'
+    volumes:
+      - redis-cluster_data-3:/bitnami/redis/data
+    environment:
+      - 'REDIS_PASSWORD=${REDIS_PASSWORD}'
+      - 'REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5'
+
+  redis-7004:
+    image: bitnami/redis:latest
+    container_name: redis-7004
+    ports:
+      - '7004:6379'
+    volumes:
+      - redis-cluster_data-4:/bitnami/redis/data
+    environment:
+      - 'REDIS_PASSWORD=${REDIS_PASSWORD}'
+      - 'REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5'
+
+  redis-7005:
+    image: bitnami/redis:latest
+    container_name: redis-7005
+    ports:
+      - '7005:6379'
+    volumes:
+      - redis-cluster_data-5:/bitnami/redis/data
+    depends_on:
+      - redis-7000
+      - redis-7001
+      - redis-7002
+      - redis-7003
+      - redis-7004
+    environment:
+      - 'REDIS_PASSWORD=${REDIS_PASSWORD}'
+      - 'REDISCLI_AUTH=bitnami'
+      - 'REDIS_CLUSTER_REPLICAS=1'
+      - 'REDIS_NODES=redis-7000 redis-7001 redis-7002 redis-7003 redis-7004 redis-7005'
+      - 'REDIS_CLUSTER_CREATOR=yes'
+
+volumes:
+  redis-cluster_data-0:
+    driver: local
+  redis-cluster_data-1:
+    driver: local
+  redis-cluster_data-2:
+    driver: local
+  redis-cluster_data-3:
+    driver: local
+  redis-cluster_data-4:
+    driver: local
+  redis-cluster_data-5:
+    driver: local

@@ -1,0 +1,33 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch:
+
+exporters:
+  clickhousetraces:
+    dsn: tcp://clickhouse:9000?database=signoz_traces&username=default&password=
+  clickhousemetricswrite:
+    dsn: tcp://clickhouse:9000?database=signoz_metrics&username=default&password=
+  clickhouselogsexporter:
+    dsn: tcp://clickhouse:9000?database=signoz_logs&username=default&password=
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [clickhousetraces]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [clickhousemetricswrite]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [clickhouselogsexporter]

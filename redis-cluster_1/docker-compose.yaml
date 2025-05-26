@@ -1,0 +1,86 @@
+version: '3'
+
+services:
+  redis-node-1:
+    container_name: redis-node-1
+    image: registry.epayservices.com.vn/utils-tool/redis:latest
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - 7001:6379
+    volumes:
+      - ./redisconf:/usr/local/etc/redis
+      - ./redisdata/node-1:/bitnami/redis/data
+
+  redis-node-2:
+    container_name: redis-node-2
+    image: registry.epayservices.com.vn/utils-tool/redis:latest
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - 7002:6379
+    volumes:
+      - ./redisconf:/usr/local/etc/redis
+      - ./redisdata/node-2:/bitnami/redis/data
+  
+  redis-node-3:
+    container_name: redis-node-3
+    image: registry.epayservices.com.vn/utils-tool/redis:latest
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - 7003:6379
+    volumes:
+      - ./redisconf:/usr/local/etc/redis
+      - ./redisdata/node-3:/bitnami/redis/data
+
+  redis-node-4:
+    container_name: redis-node-4
+    image: registry.epayservices.com.vn/utils-tool/redis:latest
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - 7004:6379
+    volumes:
+      - ./redisconf:/usr/local/etc/redis
+      - ./redisdata/node-4:/bitnami/redis/data
+
+  redis-node-5:
+    container_name: redis-node-5
+    image: registry.epayservices.com.vn/utils-tool/redis:latest
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - 7005:6379
+    volumes:
+      - ./redisconf:/usr/local/etc/redis
+      - ./redisdata/node-5:/bitnami/redis/data
+
+  redis-node-6:
+    container_name: redis-node-6
+    image: registry.epayservices.com.vn/utils-tool/redis:latest
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - 7006:6379
+    volumes:
+      - ./redisconf:/usr/local/etc/redis
+      - ./redisdata/node-6:/bitnami/redis/data
+  
+  redis-cluster-configure:
+    container_name: redis-cluster-creator
+    image: registry.epayservices.com.vn/utils-tool/redis:latest
+    command: /usr/local/etc/redis/redis-cluster-create.sh
+    volumes:
+      - ./redisconf:/usr/local/etc/redis
+    depends_on:
+      - redis-node-1
+      - redis-node-2
+      - redis-node-3
+      - redis-node-4
+      - redis-node-5
+      - redis-node-6
+  
+  redis-insight:
+    container_name: redis-insight
+    image: registry.epayservices.com.vn/utils-tool/redis/redisinsight:latest
+    ports:
+      - 5540:5540
+    volumes:
+      - ./redisinsight:/db
+    depends_on:
+      - redis-cluster-configure

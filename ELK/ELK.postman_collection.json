@@ -1,0 +1,439 @@
+{
+	"info": {
+		"_postman_id": "323930b8-a3ad-48c8-81b2-8373d939bf42",
+		"name": "ELK",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38263615"
+	},
+	"item": [
+		{
+			"name": "check request elasticsearch",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "anhnt93@",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "elastic",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:9200/_security/user",
+					"host": [
+						"localhost"
+					],
+					"port": "9200",
+					"path": [
+						"_security",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "craete user",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "anhnt93@",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "elastic",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"password\" : \"anhnt93@\",\r\n  \"roles\" : [ \"superuser\",\"restricted_admin\" ],\r\n  \"full_name\" : \"Anhnt\",\r\n  \"email\" : \"newuser@example.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:9200/_security/user/anhnt",
+					"host": [
+						"localhost"
+					],
+					"port": "9200",
+					"path": [
+						"_security",
+						"user",
+						"anhnt"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "anhnt93@",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "elastic",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "User-Agent",
+						"value": "-n"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"password\" : \"anhnt93@\",\r\n  \"roles\" : [ \"superuser\",\"restricted_admin\" ],\r\n  \"full_name\" : \"Anh NT\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:9200/_security/user/anhnt",
+					"host": [
+						"localhost"
+					],
+					"port": "9200",
+					"path": [
+						"_security",
+						"user",
+						"anhnt"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Tạo quyền mới",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "anhnt93@",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "elastic",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"indices\": [\r\n    {\r\n      \"names\": [ \".kibana*\", \".security*\", \".fleet*\" ],\r\n      \"privileges\": [ \"all\" ],\r\n      \"allow_restricted_indices\": true\r\n    }\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:9200/_security/role/restricted_admin",
+					"host": [
+						"localhost"
+					],
+					"port": "9200",
+					"path": [
+						"_security",
+						"role",
+						"restricted_admin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create token cho elastic/kibana",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "anhnt93@",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "elastic",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "$API_KEY"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:9200/_security/service/elastic/kibana/credential/token/token1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9200",
+					"path": [
+						"_security",
+						"service",
+						"elastic",
+						"kibana",
+						"credential",
+						"token",
+						"token1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get token",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "anhnt93@",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "elastic",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9200/_security/service/elastic/kibana/credential/token/token1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9200",
+					"path": [
+						"_security",
+						"service",
+						"elastic",
+						"kibana",
+						"credential",
+						"token",
+						"token1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete token",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "anhnt93@",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "elastic",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9200/_security/service/elastic/kibana/credential/token/token1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9200",
+					"path": [
+						"_security",
+						"service",
+						"elastic",
+						"kibana",
+						"credential",
+						"token",
+						"token1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Tạo api key",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "anhnt93@",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "elastic",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"logstash-key\",\n    \"role_descriptors\": {\n      \"logstash_writer\": {\n        \"cluster\": [\"monitor\", \"read_ilm\"],\n        \"index\": [\n          {\n            \"names\": [\"logstash-*\"],\n            \"privileges\": [\"write\", \"create_index\"]\n          }\n        ]\n      }\n    }\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9200/_security/api_key",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9200",
+					"path": [
+						"_security",
+						"api_key"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "test log gọi api",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"message\": \"hello from HTTP\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8888",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8888"
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get document by index key",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "anhnt93@",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "elastic",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:9200/logstash-demo-*/_search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9200",
+					"path": [
+						"logstash-demo-*",
+						"_search"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

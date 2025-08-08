@@ -25,7 +25,7 @@ services:
     container_name: logstash
     volumes:
       - ./logstash/pipeline:/usr/share/logstash/pipeline
-      # - /f/log/logfile.log:/usr/share/logstash/logs/logfile.log
+      - /f/log/logfile.log:/usr/share/logstash/logs/logfile.log
     ports:
       - "5044:5044"   # Beats input
       - "5000:5000/tcp" # TCP input
@@ -41,8 +41,8 @@ services:
     volumes:
       - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
       # - /f/logs_tt/nginx/logfile.log:/logs/nginx/logfile.log:ro
-      # - /f/logs_tt/app1/logfile.log:/logs/app1/logfile.log:ro
-      # - /f/logs_tt/app2/logfile.log:/logs/app2/logfile.log:ro
+      - /f/logs_tt/app1/logfile.log:/logs/app1/logfile.log:ro
+      - /f/logs_tt/app2/logfile.log:/logs/app2/logfile.log:ro
     depends_on:
       - logstash
 

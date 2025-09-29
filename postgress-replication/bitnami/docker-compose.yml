@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  postgresql-primary:
+    image: bitnami/postgresql:16
+    container_name: postgres-primary
+    restart: always
+    environment:
+      - POSTGRESQL_REPLICATION_MODE=master
+      - POSTGRESQL_REPLICATION_USER=anhntRep
+      - POSTGRESQL_REPLICATION_PASSWORD=Ngotheanh93@
+      - POSTGRESQL_USERNAME=anhnt
+      - POSTGRESQL_PASSWORD=Ngotheanh93@
+      - POSTGRESQL_DATABASE=demo_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_primary_data:/bitnami/postgresql
+
+  postgresql-standby:
+    image: bitnami/postgresql:16
+    container_name: postgres-standby
+    restart: always
+    depends_on:
+      - postgresql-primary
+    environment:
+      - POSTGRESQL_REPLICATION_MODE=slave
+      - POSTGRESQL_REPLICATION_USER=anhntRep
+      - POSTGRESQL_REPLICATION_PASSWORD=Ngotheanh93@
+      - POSTGRESQL_MASTER_HOST=postgresql-primary
+      - POSTGRESQL_PASSWORD=Ngotheanh93@
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres_standby_data:/bitnami/postgresql
+
+volumes:
+  postgres_primary_data:
+  postgres_standby_data:

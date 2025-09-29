@@ -1,0 +1,53 @@
+scope: demo
+name: patroni1
+
+restapi:
+  listen: 0.0.0.0:8008
+  connect_address: patroni1:8008
+
+etcd:
+  hosts: etcd1:2379,etcd2:2379,etcd3:2379
+  protocol: http
+  api_version: 2
+
+bootstrap:
+  dcs:
+    ttl: 30
+    loop_wait: 10
+    retry_timeout: 10
+    postgresql:
+      parameters:
+        max_connections: 100
+        wal_level: replica
+        hot_standby: "on"
+        max_wal_senders: 10
+        max_replication_slots: 10
+
+  initdb:
+    - encoding: UTF8
+    - data-checksums
+  pg_hba:
+    - host replication replicator 0.0.0.0/0 md5
+    - host all all 0.0.0.0/0 md5
+  
+
+postgresql:
+  listen: 0.0.0.0:5432
+  connect_address: patroni1:5432
+  data_dir: /var/lib/postgresql/data
+  bin_dir: /usr/lib/postgresql/15/bin
+  authentication:
+    superuser:
+      username: postgres
+      password: postgres
+    replication:
+      username: replicator
+      password: replicate
+  parameters:
+    wal_level: replica
+    hot_standby: "on"
+    max_wal_senders: 10
+    max_replication_slots: 10
+  hba:
+    - host replication replicator 0.0.0.0/0 md5
+    - host all all 0.0.0.0/0 md5
